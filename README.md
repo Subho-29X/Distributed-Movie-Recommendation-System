@@ -1,4 +1,4 @@
-# 🎬 Lightweight Distributed Movie Recommendation Microservice System
+# 🎬 Distributed Movie Recommendation Microservice System
 
 A distributed machine learning-based movie recommendation system built with Python and Flask, demonstrating microservices architecture, RESTful APIs, and basic ML using TF-IDF vectorization and cosine similarity.
 
