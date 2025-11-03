@@ -1,0 +1,36 @@
+============================================================
+Initializing Recommender Service...
+============================================================
+Loading dataset from: movies.csv
+Loaded 15 movies
+Columns: ['movieId', 'title', 'genres', 'genres_clean']
+Computing TF-IDF vectors...
+TF-IDF matrix shape: (15, 14)
+Computing cosine similarity matrix...
+Cosine similarity matrix shape: (15, 15)
+Similarity matrix computed successfully!
+============================================================
+Recommender Service Ready!
+============================================================
+
+============================================================
+🧠 Recommender Service Starting...
+============================================================
+Port: 5001
+ML Method: TF-IDF + Cosine Similarity
+Total Movies: 15
+
+Endpoints:
+  - GET /recommend/<movie_name>
+  - GET /movies
+  - GET /movie/<movie_name>
+  - GET /health
+
+Example usage:
+  curl http://localhost:5001/recommend/Toy%20Story
+============================================================
+
+ * Serving Flask app 'app'
+ * Debug mode: on
+Address already in use
+Port 5001 is in use by another program. Either identify and stop that program, or start the server with a different port.
