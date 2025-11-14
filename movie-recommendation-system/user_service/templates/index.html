@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Recommendation System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1.1em;
+      }
+
+      .search-box {
+        position: relative;
+        margin-bottom: 30px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 1.1em;
+        border: 2px solid #ddd;
+        border-radius: 50px;
+        outline: none;
+        transition: all 0.3s;
+      }
+
+      input[type="text"]:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      button {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .loading {
+        text-align: center;
+        margin: 20px 0;
+        display: none;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error {
+        background: #fee;
+        color: #c33;
+        padding: 15px;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: none;
+        border-left: 4px solid #c33;
+      }
+
+      .results {
+        margin-top: 30px;
+        display: none;
+      }
+
+      .results h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+      }
+
+      .movie-grid {
+        display: grid;
+        gap: 15px;
+      }
+
+      .movie-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+      }
+
+      .movie-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .movie-number {
+        font-size: 2em;
+        font-weight: bold;
+        opacity: 0.7;
+        min-width: 40px;
+      }
+
+      .movie-title {
+        font-size: 1.2em;
+        font-weight: 500;
+      }
+
+      .input-movie {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #666;
+      }
+
+      .input-movie strong {
+        color: #667eea;
+        font-size: 1.1em;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 25px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+
+        .movie-title {
+          font-size: 1em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎬 Movie Recommender</h1>
+      <p class="subtitle">Discover movies similar to your favorites</p>
+
+      <div class="search-box">
+        <input
+          type="text"
+          id="movieInput"
+          placeholder="Enter a movie name (e.g., Inception)"
+          autocomplete="off"
+        />
+      </div>
+
+      <button id="searchBtn" onclick="getRecommendations()">
+        Get Recommendations
+      </button>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p style="margin-top: 10px; color: #666">Finding recommendations...</p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="results" id="results">
+        <div class="input-movie" id="inputMovie"></div>
+        <h2>Recommended Movies:</h2>
+        <div class="movie-grid" id="movieGrid"></div>
+      </div>
+    </div>
+
+    <script>
+      const movieInput = document.getElementById("movieInput");
+      const searchBtn = document.getElementById("searchBtn");
+      const loading = document.getElementById("loading");
+      const error = document.getElementById("error");
+      const results = document.getElementById("results");
+      const inputMovie = document.getElementById("inputMovie");
+      const movieGrid = document.getElementById("movieGrid");
+
+      // Allow Enter key to trigger search
+      movieInput.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          getRecommendations();
+        }
+      });
+
+      async function getRecommendations() {
+        const movieName = movieInput.value.trim();
+
+        // Validation
+        if (!movieName) {
+          showError("Please enter a movie name");
+          return;
+        }
+
+        // Reset UI
+        error.style.display = "none";
+        results.style.display = "none";
+        loading.style.display = "block";
+        searchBtn.disabled = true;
+
+        try {
+          const response = await fetch(
+            `http://localhost:5002/recommend/${encodeURIComponent(movieName)}`
+          );
+          const data = await response.json();
+
+          loading.style.display = "none";
+          searchBtn.disabled = false;
+
+          if (response.ok) {
+            displayResults(data);
+          } else {
+            showError(
+              data.message || data.error || "Failed to get recommendations"
+            );
+          }
+        } catch (err) {
+          loading.style.display = "none";
+          searchBtn.disabled = false;
+          showError(
+            "Unable to connect to the server. Make sure both services are running."
+          );
+        }
+      }
+
+      function displayResults(data) {
+        inputMovie.innerHTML = `You searched for: <strong>${data.input_movie}</strong>`;
+
+        movieGrid.innerHTML = "";
+        data.recommendations.forEach((movie, index) => {
+          const card = document.createElement("div");
+          card.className = "movie-card";
+          card.innerHTML = `
+                    <div class="movie-number">${index + 1}</div>
+                    <div class="movie-title">${movie}</div>
+                `;
+          card.onclick = () => {
+            movieInput.value = movie;
+            getRecommendations();
+          };
+          movieGrid.appendChild(card);
+        });
+
+        results.style.display = "block";
+      }
+
+      function showError(message) {
+        error.textContent = message;
+        error.style.display = "block";
+      }
+    </script>
+  </body>
+</html>

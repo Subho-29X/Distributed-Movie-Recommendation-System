@@ -1,16 +1,16 @@
 movieId,title,genres
-1,Toy Story,Adventure|Animation|Children|Comedy|Fantasy
-2,The Matrix,Action|Sci-Fi|Thriller
-3,Inception,Action|Crime|Drama|Mystery|Sci-Fi|Thriller
-4,The Dark Knight,Action|Crime|Drama|Thriller
-5,Pulp Fiction,Crime|Drama|Thriller
-6,Forrest Gump,Comedy|Drama|Romance|War
-7,The Shawshank Redemption,Crime|Drama
-8,The Godfather,Crime|Drama
-9,Finding Nemo,Adventure|Animation|Children|Comedy
-10,A Bug's Life,Adventure|Animation|Children|Comedy
-11,Monsters Inc.,Adventure|Animation|Children|Comedy|Fantasy
-12,The Incredibles,Action|Adventure|Animation|Children|Comedy
-13,Interstellar,Adventure|Drama|Sci-Fi
-14,The Avengers,Action|Adventure|Sci-Fi
-15,Cars,Adventure|Animation|Children|Comedy
+1,Toy Story,Adventure|Animation|Children
+2,The Matrix,Action|Sci-Fi
+3,Inception,Action|Sci-Fi|Thriller
+4,The Dark Knight,Action|Crime|Drama
+5,Forrest Gump,Drama|Romance
+6,The Godfather,Crime|Drama
+7,Pulp Fiction,Crime|Drama|Thriller
+8,The Lion King,Adventure|Animation|Children
+9,Interstellar,Adventure|Drama|Sci-Fi
+10,Finding Nemo,Adventure|Animation|Children
+11,Avatar,Action|Adventure|Sci-Fi
+12,Titanic,Drama|Romance
+13,The Shawshank Redemption,Drama
+14,Jurassic Park,Action|Adventure|Sci-Fi
+15,Gladiator,Action|Adventure|Drama

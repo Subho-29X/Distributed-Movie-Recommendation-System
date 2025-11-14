@@ -1,264 +1,250 @@
+<!-- <<<<<<< HEAD:README.md -->
+
 # 🎬 Distributed Movie Recommendation Microservice System
 
-A distributed machine learning-based movie recommendation system built with Python and Flask, demonstrating microservices architecture, RESTful APIs, and basic ML using TF-IDF vectorization and cosine similarity.
+<!-- =======
 
-## 🎯 System Overview
+# Distributed Movie Recommendation System -->
 
-This project consists of two independent Flask microservices that communicate over HTTP:
+<!-- >>>>>>> dbbd4ed (Revamp):movie-recommendation-system/README.md -->
 
-1. **User Service** (Port 5000) - Frontend API that accepts user requests
-2. **Recommender Service** (Port 5001) - ML-powered recommendation engine
+A lightweight microservices-based movie recommendation system built with Python and Flask. The system uses TF-IDF vectorization and cosine similarity to recommend movies based on genre similarities.
 
-## 🧩 Architecture
+## Overview
+
+This project demonstrates a simple distributed architecture where two independent services communicate via HTTP APIs:
+
+- **User Service**: Acts as the API gateway, handling user requests
+- **Recommender Service**: Contains the ML logic for generating recommendations
+
+## Architecture
 
 ```
-User Request → User Service (Port 5000)
-                    ↓ HTTP Request
-              Recommender Service (Port 5001)
-                    ↓ ML Processing (TF-IDF + Cosine Similarity)
-              Top 5 Recommendations
-                    ↓ JSON Response
-              User Service → User
+┌─────────────┐         HTTP Request          ┌──────────────────────┐
+│             │ ──────────────────────────────>│                      │
+│   User      │         Port 5000              │   User Service       │
+│             │ <──────────────────────────────│   (API Gateway)      │
+└─────────────┘         JSON Response          └──────────────────────┘
+                                                          │
+                                                          │ HTTP
+                                                          │
+                                                          ▼
+                                                ┌──────────────────────┐
+                                                │                      │
+                                                │  Recommender Service │
+                                                │  (ML Engine)         │
+                                                │  Port 5001           │
+                                                └──────────────────────┘
+                                                          │
+                                                          │
+                                                          ▼
+                                                    ┌──────────┐
+                                                    │ movies.csv│
+                                                    └──────────┘
 ```
 
-## 📁 Project Structure
+## Tech Stack
+
+- **Python 3.x**: Programming language
+- **Flask**: Web framework for building REST APIs
+- **Pandas**: Data manipulation and CSV handling
+- **Scikit-learn**: TF-IDF vectorization and cosine similarity
+- **Requests**: HTTP client for inter-service communication
+
+## Folder Structure
 
 ```
 movie-recommendation-system/
 │
 ├── user_service/
-│   ├── app.py              # User-facing Flask API
-│   ├── requirements.txt    # Dependencies
+│   ├── app.py                    # User-facing API (Port 5000)
+│   └── requirements.txt
 │
 ├── recommender_service/
-│   ├── app.py              # Recommender Flask API
-│   ├── recommender.py      # ML recommendation engine
-│   ├── movies.csv          # Movie dataset
-│   ├── requirements.txt    # Dependencies
+│   ├── app.py                    # Recommendation API (Port 5001)
+│   ├── recommender.py            # ML logic
+│   ├── movies.csv                # Movie dataset
+│   └── requirements.txt
 │
-└── README.md               # This file
+└── README.md
 ```
 
-## ⚙️ Tech Stack
+## Setup Instructions
 
-- **Language**: Python 3
-- **Framework**: Flask
-- **ML Libraries**: scikit-learn (TF-IDF, Cosine Similarity)
-- **Data Processing**: pandas, numpy
-- **HTTP Client**: requests
+### 1. Install Dependencies
 
-## 🚀 Setup & Installation
+Open two terminal windows/tabs.
 
-### Prerequisites
+**Terminal 1 - Recommender Service:**
 
-- Python 3.8+
-- pip package manager
+```bash
+cd recommender_service
+pip install -r requirements.txt
+```
 
-### Installation Steps
+**Terminal 2 - User Service:**
 
-1. **Clone or navigate to the project directory**
+```bash
+cd user_service
+pip install -r requirements.txt
+```
 
-   ```bash
-   cd movie-recommendation-system
-   ```
+### 2. Start the Services
 
-2. **Install User Service dependencies**
+**Important**: Start the recommender service first!
 
-   ```bash
-   cd user_service
-   pip install -r requirements.txt
-   cd ..
-   ```
-
-3. **Install Recommender Service dependencies**
-   ```bash
-   cd recommender_service
-   pip install -r requirements.txt
-   cd ..
-   ```
-
-## 🏃 Running the System
-
-You need to run both services in separate terminal windows:
-
-### Terminal 1: Start Recommender Service (Port 5001)
+**Terminal 1:**
 
 ```bash
 cd recommender_service
 python app.py
 ```
 
-You should see:
+_Output: Service running on http://localhost:5001_
 
-```
-Loading movie dataset and computing similarity matrix...
-Similarity matrix computed successfully!
- * Running on http://127.0.0.1:5001
-```
-
-### Terminal 2: Start User Service (Port 5000)
+**Terminal 2:**
 
 ```bash
 cd user_service
 python app.py
 ```
 
-You should see:
+_Output: Service running on http://localhost:5000_
 
-```
- * Running on http://127.0.0.1:5000
-```
+## Usage
 
-## 📡 API Usage
-
-### Get Movie Recommendations
-
-**Endpoint**: `GET /recommend/<movie_name>`
-
-**Example Request**:
+### Example Request
 
 ```bash
-curl http://localhost:5000/recommend/Toy%20Story
+curl http://localhost:5000/recommend/Inception
 ```
 
-**Example Response**:
+### Example Response
 
 ```json
 {
-  "movie": "Toy Story",
+  "input_movie": "Inception",
   "recommendations": [
-    "A Bug's Life",
-    "Monsters, Inc.",
-    "Finding Nemo",
-    "The Incredibles",
-    "Cars"
+    "The Matrix",
+    "Interstellar",
+    "Avatar",
+    "Jurassic Park",
+    "The Dark Knight"
   ]
 }
 ```
 
-### Error Handling
-
-**Movie Not Found**:
-
-```json
-{
-  "error": "Movie 'Unknown Movie' not found in database"
-}
-```
-
-**Service Unavailable**:
-
-```json
-{
-  "error": "Recommender service is currently unavailable"
-}
-```
-
-## 🧠 How It Works
-
-### 1. User Service
-
-- Accepts HTTP GET requests with a movie name
-- Forwards the request to the Recommender Service via HTTP
-- Returns the recommendation results to the user
-- Handles errors gracefully
-
-### 2. Recommender Service
-
-- **Loads Dataset**: Reads `movies.csv` on startup
-- **TF-IDF Vectorization**: Converts movie genres into numerical vectors
-- **Cosine Similarity**: Computes similarity between all movies (precomputed for efficiency)
-- **Recommendation**: Returns top 5 most similar movies based on genre similarity
-- **Caching**: Similarity matrix is computed once at startup for fast responses
-
-### ML Pipeline
-
-1. Extract movie genres from the dataset
-2. Apply TF-IDF (Term Frequency-Inverse Document Frequency) vectorization
-3. Compute pairwise cosine similarity matrix
-4. For a given movie, find the 5 most similar movies
-5. Return recommendations excluding the input movie itself
-
-## 📊 Dataset
-
-The system includes a sample dataset (`movies.csv`) with 15 popular movies:
-
-- Toy Story
-- The Matrix
-- Inception
-- The Dark Knight
-- Pulp Fiction
-- And more...
-
-Each movie has:
-
-- `movieId`: Unique identifier
-- `title`: Movie name
-- `genres`: Pipe-separated genres (e.g., "Adventure|Animation|Children")
-
-## 🔧 Customization
-
-### Adding More Movies
-
-Edit `recommender_service/movies.csv` and add new entries:
-
-```csv
-16,Your Movie,Action|Sci-Fi
-```
-
-Restart the Recommender Service to reload the dataset.
-
-### Changing Ports
-
-- User Service: Edit `user_service/app.py`, change `port=5000`
-- Recommender Service: Edit `recommender_service/app.py`, change `port=5001`
-- Also update the RECOMMENDER_URL in `user_service/app.py`
-
-## 💻 System Requirements
-
-- **OS**: macOS , also works on Linux/Windows
-- **RAM**: ~200MB (very lightweight)
-- **CPU**: No GPU required, runs efficiently on any modern CPU
-- **Disk**: <10MB
-
-## 🧪 Testing
-
-Test individual services:
+### Try More Movies
 
 ```bash
-# Test Recommender Service directly
-curl http://localhost:5001/recommend/Inception
-
-# Test User Service (which calls Recommender Service)
+curl http://localhost:5000/recommend/Toy%20Story
 curl http://localhost:5000/recommend/The%20Matrix
+curl http://localhost:5000/recommend/Titanic
 ```
 
-## 🎓 Learning Outcomes
+### Health Check
+
+```bash
+curl http://localhost:5000/health
+curl http://localhost:5001/health
+```
+
+## Error Handling
+
+The system handles multiple error scenarios:
+
+### 1. Movie Not Found
+
+```bash
+curl http://localhost:5000/recommend/InvalidMovie
+```
+
+**Response (404):**
+
+```json
+{
+  "error": "Movie not found",
+  "message": "The movie \"InvalidMovie\" was not found in our database",
+  "suggestion": "Please check the movie name and try again"
+}
+```
+
+### 2. Recommender Service Offline
+
+If recommender service is not running:
+**Response (503):**
+
+```json
+{
+  "error": "Service unavailable",
+  "message": "Recommender service is currently offline",
+  "suggestion": "Please ensure the recommender service is running on port 5001"
+}
+```
+
+### 3. Invalid Input
+
+```bash
+curl http://localhost:5000/recommend/
+```
+
+**Response (400):**
+
+```json
+{
+  "error": "Invalid movie name",
+  "message": "Movie name cannot be empty"
+}
+```
+
+## How It Works
+
+### Recommender Service
+
+1. **Startup**: Loads `movies.csv` and precomputes the similarity matrix using TF-IDF on genres
+2. **TF-IDF Vectorization**: Converts genre strings (e.g., "Action|Sci-Fi") into numerical vectors
+3. **Cosine Similarity**: Computes similarity scores between all movie pairs
+4. **Recommendation**: Returns top 5 most similar movies based on precomputed scores
+
+### User Service
+
+1. Receives user requests on port 5000
+2. Forwards requests to recommender service on port 5001
+3. Returns formatted responses to the user
+4. Handles timeouts and connection errors gracefully
+
+## Learning Outcomes
 
 This project demonstrates:
 
-- ✅ Microservices architecture
-- ✅ RESTful API design
-- ✅ Inter-service communication over HTTP
-- ✅ Machine Learning (TF-IDF, Cosine Similarity)
-- ✅ Distributed systems basics
-- ✅ Error handling and fault tolerance
-- ✅ Efficient ML preprocessing and caching
+✅ **Microservices Architecture**: Separation of concerns between services  
+✅ **REST API Design**: Clean endpoint design with proper HTTP methods  
+✅ **Error Handling**: Comprehensive error responses with meaningful messages  
+✅ **Machine Learning**: TF-IDF vectorization and cosine similarity  
+✅ **Inter-Service Communication**: HTTP-based service-to-service calls  
+✅ **Data Processing**: Using Pandas for CSV operations  
+✅ **Service Independence**: Each service can be developed and deployed independently
 
-## 📝 License
+## Dataset
 
-This is a learning project - feel free to use and modify as needed!
+The system includes 15 movies across various genres:
 
-## 🤝 Contributing
+- Action, Sci-Fi: The Matrix, Inception, Avatar, Jurassic Park
+- Animation: Toy Story, The Lion King, Finding Nemo
+- Drama: The Godfather, Forrest Gump, The Shawshank Redemption
+- And more...
 
-Feel free to enhance this project by:
+## Extending the System
 
-- Adding more sophisticated ML models
-- Implementing user ratings-based collaborative filtering
-- Adding a web UI
-- Implementing service discovery
-- Adding containerization (Docker)
+To add more movies, simply edit `recommender_service/movies.csv`:
+
+```csv
+movieId,title,genres
+16,Your Movie,Action|Drama|Thriller
+```
+
+Restart the recommender service to reload the dataset.
 
 ---
 
-**Happy Coding! 🚀**
+**Built with ❤️ using Python and Flask**
